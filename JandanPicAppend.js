@@ -19,6 +19,7 @@ function clearOtherDivs(){
 function checkPic(pic){
 	if(pic.tagName == "LI" && pic.id.match(/comment-\d*/)){
 		picId = pic.id.match(/comment-\d*/).toString().replace("comment-","");
+		pic.picId = picId;
 		
 		var oo = parseInt(document.getElementById("cos_support-" + picId).innerText);
 		var xx = parseInt(document.getElementById("cos_unsupport-" + picId).innerText);
@@ -43,12 +44,54 @@ function refreshPics(){
 	}
 }
 
+function toggleTuCaoComments(id){
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", "http://jandan.net/pic/page-" + currentPageIndex, true);
+	xhr.onload = function(){
+		var htmlText = xhr.responseText;
+
+		var start = htmlText.indexOf('<ol class="commentlist" style="list-style-type: none;">');
+		var end = htmlText.indexOf('<\/ol>');
+
+		var listHTML = htmlText.substring(start, end + '<\/ol>'.length);
+		hiddenListContent.innerHTML = listHTML;
+		var newList = hiddenListContent.getElementsByClassName("commentlist")[0];
+		addPics(newList)
+		
+		isCheckLoading = true;
+	}
+	xhr.send();
+}
+
+function createTuCaoButton(id){
+	var button = document.createElement("span");
+	button.classlist.add("time");
+	
+	var link = document.createElement("a");
+	link.href = "javascript:void(0);";
+	// link.onclick = "toggleTuCaoComments(id);";
+	link.onclick = function (){alert("click")};
+	link.innerText = " ↓吐槽";
+	
+	button.appendChild(link);
+	
+	return button;
+}
+
+function AddTuCaoButton(pic){
+	var voteContent = pic.getElementsByClassName("vote")[0];
+	
+	var button = createTuCaoButton(pic.picId);
+	voteContent.appendChild(button);
+}
+
 function addPics(list){
 	var pics = list.getElementsByClassName("row");
 
 	for(var i = 0; i< pics.length; i++){
 		var pic = pics[i];
 		if(checkPic(pic) == "good"){
+			AddTuCaoButton(pic);
 			currentList.appendChild(pic);
 			i -= 1;
 		}
