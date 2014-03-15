@@ -16,7 +16,6 @@ function clearOtherDivs(){
 	removeElementsById("sidebar");	
 }
 
-
 function checkPic(pic){
 	if(pic.tagName == "LI" && pic.id.match(/comment-\d*/)){
 		picId = pic.id.match(/comment-\d*/).toString().replace("comment-","");
@@ -56,6 +55,39 @@ function addPics(list){
 	}
 }
 
+function loadNextPage(){
+	currentPageIndex --;
+	
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", "http://jandan.net/pic/page-" + currentPageIndex, true);
+	xhr.onload = function(){
+		var htmlText = xhr.responseText;
+
+		var start = htmlText.indexOf('<ol class="commentlist" style="list-style-type: none;">');
+		var end = htmlText.indexOf('<\/ol>');
+
+		var listHTML = htmlText.substring(start, end + '<\/ol>'.length);
+		hiddenListContent.innerHTML = listHTML;
+		var newList = hiddenListContent.getElementsByClassName("commentlist")[0];
+		addPics(newList)
+		
+		isCheckLoading = true;
+	}
+	xhr.send();
+}
+
+function checkIfLoadNextPage(){
+	if(isCheckLoading){
+		var checkHeight = 3000;
+
+		if(window.scrollY > document.body.scrollHeight - checkHeight){
+			isCheckLoading = false;
+			loadNextPage();
+		}
+	}
+}
+
+
 var currentPageDiv = document.getElementsByClassName("current-comment-page")[0];
 var currentPageIndex = currentPageDiv.innerText.substring(1, currentPageDiv.innerText.length-1);
 
@@ -65,18 +97,9 @@ var currentList = picContent.getElementsByClassName("commentlist")[0];
 refreshPics();
 clearOtherDivs();
 
-// var newList = document.createElement("lo");
-// newList.classList.add("commentlist");
-// newList.style.listStyleType = "none";
-// addPics(currentList);
+var hiddenListContent = document.createElement("lo");
+hiddenListContent.style.display = "none";
+picContent.appendChild(hiddenListContent);
 
-//picContent.replaceChild(newList, currentList);
-
-
-// var xhr = new XMLHttpRequest();
-// xhr.open("GET", this.searchOnFlickr_, true);
-// xhr.onload = function(){
-	// var list = xhr.responseText.match(/<ol class="commentlist" style="list-style-type: none;">.* <\/ol>/);
-	// addPics(list)
-// }
-// xhr.send();
+var isCheckLoading = true;
+window.onscroll = checkIfLoadNextPage;
