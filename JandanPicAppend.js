@@ -1,14 +1,21 @@
-function clearOtherDivs(){
-	var comments = document.getElementsByClassName("comments");
-	while(comments.length > 0){
-		comments[0].remove();
-	}
-	
-	var forms = document.getElementsByTagName("form");
-	while(forms.length > 0){
-		forms[0].remove();
+function removeElementsByClass(className){
+	var elements = document.getElementsByClassName(className);
+	while(elements.length > 0){
+		elements[0].remove();
 	}
 }
+
+function removeElementsById(id){
+	document.getElementById(id).remove();
+}
+
+function clearOtherDivs(){
+	removeElementsByClass("comments");	
+	removeElementsByClass("post");	
+	removeElementsById("commentform");	
+	removeElementsById("sidebar");	
+}
+
 
 function checkPic(pic){
 	if(pic.tagName == "LI" && pic.id.match(/comment-\d*/)){
