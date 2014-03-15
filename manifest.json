@@ -1,0 +1,25 @@
+{
+	"manifest_version": 2,
+
+	"name": "JandanPic",
+	"description": "This extention is for getting good pictures from jandan",
+	"version": "1.0.0.0",
+
+	"content_scripts": [
+		{
+		  "matches": ["http://jandan.net/pic/*"],
+		  "js": ["JandanPicAppend.js"]
+		}
+	  ],
+
+  
+//	"browser_action": {
+//          "default_icon": "icon.png",
+//          "default_title": "JandanPic",      
+//          "default_popup": "JandanPicPopup.html"        
+//        },
+		
+	"permissions": [
+		"http://jandan.net/*"
+	  ]
+}
