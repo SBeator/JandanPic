@@ -5,10 +5,6 @@
 	"description": "This extention is for getting good pictures from jandan",
 	"version": "1.0.0.0",
 
-	"background": {
-		"page": "background.html"
-	},
-
 	"content_scripts": [
 		{
 		  "matches": ["http://jandan.net/pic/*"],
