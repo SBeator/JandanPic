@@ -46,31 +46,26 @@ function refreshPics(){
 
 function toggleTuCaoComments(id){
 	var xhr = new XMLHttpRequest();
-	xhr.open("GET", "http://jandan.net/pic/page-" + currentPageIndex, true);
+	xhr.open("GET", "http://jandan.duoshuo.com/api/threads/listPosts.json?thread_key=comment-" + id, true);
 	xhr.onload = function(){
-		var htmlText = xhr.responseText;
-
-		var start = htmlText.indexOf('<ol class="commentlist" style="list-style-type: none;">');
-		var end = htmlText.indexOf('<\/ol>');
-
-		var listHTML = htmlText.substring(start, end + '<\/ol>'.length);
-		hiddenListContent.innerHTML = listHTML;
-		var newList = hiddenListContent.getElementsByClassName("commentlist")[0];
-		addPics(newList)
+		var response = JSON.parse(xhr.responseText);
+		chrome.extension.sendRequest({eventName: event, eventValue: {id: id, response: response}});
 		
-		isCheckLoading = true;
+		var tucaos = response.parentPosts;
+		for(var i in tucaos){
+			var tucao = tucaos[i];
+		}
 	}
 	xhr.send();
 }
 
 function createTuCaoButton(id){
 	var button = document.createElement("span");
-	button.classlist.add("time");
+	button.classList.add("time");
 	
 	var link = document.createElement("a");
 	link.href = "javascript:void(0);";
-	// link.onclick = "toggleTuCaoComments(id);";
-	link.onclick = function (){alert("click")};
+	link.onclick = function(){toggleTuCaoComments(id);}
 	link.innerText = " ↓吐槽";
 	
 	button.appendChild(link);
